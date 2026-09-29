@@ -1,0 +1,20 @@
+services:
+  registry:
+    build: .
+    image: local-artifact-registry:latest
+    container_name: local-artifact-registry
+    ports:
+      - "8080:8080"
+    environment:
+      # Unexpired/finalized upload leases younger than this are GC roots.
+      REGISTRY_UPLOAD_TTL_SECONDS: "86400"
+      # Dry-run plans must be confirmed within this window.
+      REGISTRY_GC_PLAN_TTL_SECONDS: "7200"
+      # Uncomment to require `Authorization: Bearer …` for POST /gc:
+      # REGISTRY_GC_TOKEN: "change-me"
+    volumes:
+      - registry-data:/data
+    restart: unless-stopped
+
+volumes:
+  registry-data:
